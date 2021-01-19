@@ -1,33 +1,28 @@
      1                                  extern printf
      2                                  
-     3                                  struc mytype
-     4 00000000 ????????                    mt_long:  resd 1
-     5 00000004 ????                        mt_word:  resw 1
-     6 00000006 ??                          mt_byte:  resb 1
-     7 00000007 <res 20h>                   mt_str:   resb 32
-     8                                  endstruc
-     9                                  
-    10                                  section .data
-    11                                      mystruc:
-    12                                          istruc mytype
-    13 00000000 40E20100                            at mt_long, dd    123456
-    14 00000004 0004                                at mt_word, dw    1024
-    15 00000006 78                                  at mt_byte, db    "x"
-    16 00000007 68656C6C6F2C20776F-                 at mt_str,  db    "hello, world", 13, 10, 0
-    16 00000010 726C640D0A00       
-    17 00000016 00<rep 11h>                     iend
-    18 00000027 2573                        fmt_str  db  "%s"
-    19                                  
-    20                                  section .text
-    21                                      global main
-    22                                  main:
-    23 00000000 55                          push rbp
-    24 00000001 4889E5                      mov  rbp, rsp
+     3                                  struc _employee
+     4 00000000 <res 20h>                   _e_name:  resb 32
+     5 00000020 ??                          _e_age:   resb 1
+     6                                  endstruc
+     7                                  
+     8                                  section .data
+     9                                      samuel:
+    10                                          istruc _employee
+    11 00000000 53616D75656C                        at _e_name, db  "Samuel"
+    12 00000006 00<rep 1Ah>20                       at _e_age,  db  32
+    13                                          iend
+    14 00000021 25730A                      fmt_str  db  "%s", 10
+    15                                  
+    16                                  section .text
+    17                                      global main
+    18                                  main:
+    19 00000000 55                          push rbp
+    20 00000001 4889E5                      mov  rbp, rsp
+    21                                  
+    22 00000004 48BF-                       mov  rdi, fmt_str
+    22 00000006 [2100000000000000] 
+    23 0000000E 488D3425[00000000]          lea  rsi, [samuel+_e_name]
+    24 00000016 E8(00000000)                call printf
     25                                  
-    26 00000004 48BF-                       mov  rdi, fmt_str
-    26 00000006 [2700000000000000] 
-    27 0000000E 488D3425[07000000]          lea  rsi, [mystruc+mt_str]
-    28 00000016 E8(00000000)                call printf
-    29                                  
-    30 0000001B C9                          leave
-    31 0000001C C3                          ret
+    26 0000001B C9                          leave
+    27 0000001C C3                          ret
