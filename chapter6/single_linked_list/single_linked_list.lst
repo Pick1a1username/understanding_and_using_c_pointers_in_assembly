@@ -1,28 +1,64 @@
      1                                  extern printf
-     2                                  
-     3                                  struc _employee
-     4 00000000 <res 20h>                   _e_name:  resb 32
-     5 00000020 ??                          _e_age:   resb 1
-     6                                  endstruc
-     7                                  
-     8                                  section .data
-     9                                      samuel:
-    10                                          istruc _employee
-    11 00000000 53616D75656C                        at _e_name, db  "Samuel"
-    12 00000006 00<rep 1Ah>20                       at _e_age,  db  32
-    13                                          iend
-    14 00000021 25730A                      fmt_str  db  "%s", 10
-    15                                  
-    16                                  section .text
-    17                                      global main
-    18                                  main:
-    19 00000000 55                          push rbp
-    20 00000001 4889E5                      mov  rbp, rsp
-    21                                  
-    22 00000004 48BF-                       mov  rdi, fmt_str
-    22 00000006 [2100000000000000] 
-    23 0000000E 488D3425[00000000]          lea  rsi, [samuel+_e_name]
-    24 00000016 E8(00000000)                call printf
-    25                                  
-    26 0000001B C9                          leave
-    27 0000001C C3                          ret
+     2                                  extern strcmp
+     3                                  
+     4                                  struc _employee
+     5 00000000 <res 20h>                   _e_name:  resb 32
+     6 00000020 ??                          _e_age:   resb 1
+     7                                  endstruc
+     8                                  
+     9                                  section .data
+    10                                      samuel:
+    11                                          istruc _employee
+    12 00000000 53616D75656C00                      at _e_name, db  "Samuel", 0
+    13 00000007 00<rep 19h>20                       at _e_age,  db  32
+    14                                          iend
+    15                                      sally:
+    16                                          istruc _employee
+    17 00000021 53616C6C7900                        at _e_name, db  "Sally", 0
+    18 00000027 00<rep 1Ah>1C                       at _e_age,  db  28
+    19                                          iend
+    20                                      susan:
+    21                                          istruc _employee
+    22 00000042 537573616E00                        at _e_name, db  "Susan", 0
+    23 00000048 00<rep 1Ah>2D                       at _e_age,  db  45
+    24                                          iend
+    25 00000063 25730A00                    fmt_str  db  "%s", 10, 0
+    26 00000067 25640A00                    fmt_int  db  "%d", 10, 0
+    27                                  
+    28                                  section .text
+    29                                  
+    30                                  global main
+    31                                  main:
+    32 00000000 55                          push rbp
+    33 00000001 4889E5                      mov  rbp, rsp
+    34                                  
+    35 00000004 48BF-                       mov  rdi, fmt_str
+    35 00000006 [6300000000000000] 
+    36 0000000E 488D3425[00000000]          lea  rsi, [samuel+_e_name]
+    37 00000016 E8(00000000)                call printf
+    38                                  
+    39 0000001B 488D3C25[21000000]          lea  rdi, [sally]
+    40 00000023 488D3425[00000000]          lea  rsi, [samuel]
+    41 0000002B E814000000                  call compare_employee
+    42                                  
+    43 00000030 48BF-                       mov  rdi, fmt_int
+    43 00000032 [6700000000000000] 
+    44 0000003A 4889C6                      mov  rsi, rax
+    45 0000003D E8(00000000)                call printf
+    46                                  
+    47 00000042 C9                          leave
+    48 00000043 C3                          ret
+    49                                  
+    50                                  global compare_employee
+    51                                  compare_employee:
+    52                                      section .text 
+    53 00000044 55                              push rbp
+    54 00000045 4889E5                          mov  rbp, rsp
+    55                                  
+    56 00000048 488D3F                          lea rdi, [rdi+_e_name]
+    57 0000004B 488D36                          lea rsi, [rsi+_e_name]
+    58 0000004E E8(00000000)                    call strcmp
+    59                                  
+    60 00000053 C9                              leave
+    61 00000054 C3                              ret
+    62                                    
