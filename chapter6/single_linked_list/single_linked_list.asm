@@ -18,11 +18,6 @@ section .data
     susan        dq  0
     susan_name   db  "Susan", 0
     susan_age    db  45
-;     susan:
-;         istruc _employee
-;             at _e_name, db  "Susan", 0
-;             at _e_age,  db  45
-;         iend
     fmt_str  db  "%s", 10, 0
     fmt_int  db  "%d", 10, 0
 
@@ -33,58 +28,33 @@ main:
     push rbp
     mov  rbp, rsp
 
-    xor  rdi, rdi      ; rdi must be initialized!
-    mov  rdi, _e_name
-    add  rdi, _e_age
-    call malloc
-    mov  [samuel], rax
-    xor  rdi, rdi
-    mov  rdi, [samuel]
-    add  rdi, _e_name
-    lea  rsi, [samuel_name]
-    call strcpy
-    add  rdi, _e_age
-    mov  rsi, [samuel_age]
-    mov  [rdi], rsi
-    xor  rdi, rdi
+
+    mov  rdi, samuel_name
     xor  rsi, rsi
+    mov  sil, [samuel_age]  ; sil is the lower 8 bits of rsi
+    call init_employee
+    mov  [samuel], rax
 
-;     mov  rdi, _e_name
-;     add  rdi, _e_age
-;     call malloc
-;     mov  [sally], rax
-;     xor  rdi, rdi
-;     lea  rdi, [sally+_e_name]
-;     lea  rsi, [sally_name]
-;     call strcpy
-; 
-;     mov  rdi, _e_name
-;     add  rdi, _e_age
-;     call malloc
-;     mov  [susan], rax
-;     xor  rdi, rdi
-;     lea  rdi, [susan+_e_name]
-;     lea  rsi, [susan_name]
-;     call strcpy
+    mov  rdi, sally_name
+    xor  rsi, rsi
+    mov  sil, [sally_age]
+    call init_employee
+    mov  [sally], rax
 
-    mov  rdi, fmt_str
-    mov  rsi, [samuel]
-    add  rsi, _e_name
-    call printf
-    mov  rdi, fmt_int
-    mov  rsi, [samuel]
-    add  rsi, _e_name
-    add  rsi, _e_age
-    mov  rsi, [rsi]
-    call printf
+    mov  rdi, susan_name
+    xor  rsi, rsi
+    mov  sil, [susan_age]
+    call init_employee
+    mov  [susan], rax
 
-;     lea  rdi, [sally]
-;     lea  rsi, [samuel]
-;     call compare_employee
-; 
-;     mov  rdi, fmt_int
-;     mov  rsi, rax
-;     call printf
+    mov  rdi, [samuel]
+    call display_employee
+
+    mov  rdi, [sally]
+    call display_employee
+
+    mov  rdi, [susan]
+    call display_employee
 
     leave
     ret
@@ -102,3 +72,77 @@ compare_employee:
         leave
         ret
   
+; * Args
+;   * rdi: the address of name(string)
+;   * rsi: age(unsigned integer)
+; * Return: The address of the new employee
+init_employee:
+    section .text
+        push rbp
+        mov  rbp, rsp
+        push r12
+    
+        mov  r10, rdi      ; the address of name
+        mov  r11, rsi      ; age
+        
+        ; Allocate the memory from heap
+        xor  rdi, rdi      ; rdi must be initialized!
+        mov  rdi, _e_age  ; the size of _e_name
+        add  rdi, 1       ; the size of _e_age
+        push r10
+        push r11
+        call malloc
+        pop  r11
+        pop  r10
+        mov  r12, rax     ; Backup the address of employee
+
+        ; Set name
+        lea  rdi, [r12]
+        lea  rsi, [r10]
+        push r10
+        push r11
+        push r12          ; for stack alignment
+        call strcpy
+        pop  r12
+        pop  r11
+        pop  r10
+
+        ; Set age
+        lea  rdi, [r12]
+        add  rdi, _e_age
+        mov  [rdi], r11
+        xor  rdi, rdi
+        xor  rsi, rsi
+
+        mov  rax, r12
+
+        pop r12
+        leave
+        ret
+
+; * Args
+;    * rdi: the address of employee
+display_employee:
+    section .data
+        .fmt  db  `%s\t%d\n`, 0
+    section .text
+        push rbp
+        mov  rbp, rsp
+
+        mov  r10, rdi  ; the address of employee
+
+        mov  rdi, .fmt
+        mov  rsi, r10     ; name
+        mov  rdx, r10 
+        add  rdx, _e_age  
+        mov  rdx, [rdx]   ; age
+        call printf
+
+        leave
+        ret
+
+
+
+
+ 
+
