@@ -1,64 +1,106 @@
      1                                  extern printf
      2                                  extern strcmp
-     3                                  
-     4                                  struc _employee
-     5 00000000 <res 20h>                   _e_name:  resb 32
-     6 00000020 ??                          _e_age:   resb 1
-     7                                  endstruc
-     8                                  
-     9                                  section .data
-    10                                      samuel:
-    11                                          istruc _employee
-    12 00000000 53616D75656C00                      at _e_name, db  "Samuel", 0
-    13 00000007 00<rep 19h>20                       at _e_age,  db  32
-    14                                          iend
-    15                                      sally:
-    16                                          istruc _employee
-    17 00000021 53616C6C7900                        at _e_name, db  "Sally", 0
-    18 00000027 00<rep 1Ah>1C                       at _e_age,  db  28
-    19                                          iend
-    20                                      susan:
-    21                                          istruc _employee
-    22 00000042 537573616E00                        at _e_name, db  "Susan", 0
-    23 00000048 00<rep 1Ah>2D                       at _e_age,  db  45
-    24                                          iend
-    25 00000063 25730A00                    fmt_str  db  "%s", 10, 0
-    26 00000067 25640A00                    fmt_int  db  "%d", 10, 0
-    27                                  
-    28                                  section .text
-    29                                  
-    30                                  global main
-    31                                  main:
-    32 00000000 55                          push rbp
-    33 00000001 4889E5                      mov  rbp, rsp
-    34                                  
-    35 00000004 48BF-                       mov  rdi, fmt_str
-    35 00000006 [6300000000000000] 
-    36 0000000E 488D3425[00000000]          lea  rsi, [samuel+_e_name]
-    37 00000016 E8(00000000)                call printf
-    38                                  
-    39 0000001B 488D3C25[21000000]          lea  rdi, [sally]
-    40 00000023 488D3425[00000000]          lea  rsi, [samuel]
-    41 0000002B E814000000                  call compare_employee
-    42                                  
-    43 00000030 48BF-                       mov  rdi, fmt_int
-    43 00000032 [6700000000000000] 
-    44 0000003A 4889C6                      mov  rsi, rax
-    45 0000003D E8(00000000)                call printf
-    46                                  
-    47 00000042 C9                          leave
-    48 00000043 C3                          ret
-    49                                  
-    50                                  global compare_employee
-    51                                  compare_employee:
-    52                                      section .text 
-    53 00000044 55                              push rbp
-    54 00000045 4889E5                          mov  rbp, rsp
-    55                                  
-    56 00000048 488D3F                          lea rdi, [rdi+_e_name]
-    57 0000004B 488D36                          lea rsi, [rsi+_e_name]
-    58 0000004E E8(00000000)                    call strcmp
-    59                                  
-    60 00000053 C9                              leave
-    61 00000054 C3                              ret
-    62                                    
+     3                                  extern malloc
+     4                                  extern strcpy
+     5                                  
+     6                                  struc _employee
+     7 00000000 <res 20h>                   _e_name:  resb 32
+     8 00000020 ??                          _e_age:   resb 1
+     9                                  endstruc
+    10                                  
+    11                                  section .data
+    12 00000000 0000000000000000            samuel       dq  0
+    13 00000008 53616D75656C00              samuel_name  db  "Samuel", 0
+    14 0000000F 20                          samuel_age   db  32
+    15 00000010 0000000000000000            sally        dq  0
+    16 00000018 53616C6C7900                sally_name   db  "Sally", 0
+    17 0000001E 1C                          sally_age    db  28
+    18 0000001F 0000000000000000            susan        dq  0
+    19 00000027 537573616E00                susan_name   db  "Susan", 0
+    20 0000002D 2D                          susan_age    db  45
+    21                                  ;     susan:
+    22                                  ;         istruc _employee
+    23                                  ;             at _e_name, db  "Susan", 0
+    24                                  ;             at _e_age,  db  45
+    25                                  ;         iend
+    26 0000002E 25730A00                    fmt_str  db  "%s", 10, 0
+    27 00000032 25640A00                    fmt_int  db  "%d", 10, 0
+    28                                  
+    29                                  section .text
+    30                                  
+    31                                  global main
+    32                                  main:
+    33 00000000 55                          push rbp
+    34 00000001 4889E5                      mov  rbp, rsp
+    35                                  
+    36 00000004 4831FF                      xor  rdi, rdi      ; rdi must be initialized!
+    37 00000007 BF00000000                  mov  rdi, _e_name
+    38 0000000C 4883C720                    add  rdi, _e_age
+    39 00000010 E8(00000000)                call malloc
+    40 00000015 48890425[00000000]          mov  [samuel], rax
+    41 0000001D 4831FF                      xor  rdi, rdi
+    42 00000020 488B3C25[00000000]          mov  rdi, [samuel]
+    43 00000028 4883C700                    add  rdi, _e_name
+    44 0000002C 488D3425[08000000]          lea  rsi, [samuel_name]
+    45 00000034 E8(00000000)                call strcpy
+    46 00000039 4883C720                    add  rdi, _e_age
+    47 0000003D 488B3425[0F000000]          mov  rsi, [samuel_age]
+    48 00000045 488937                      mov  [rdi], rsi
+    49 00000048 4831FF                      xor  rdi, rdi
+    50 0000004B 4831F6                      xor  rsi, rsi
+    51                                  
+    52                                  ;     mov  rdi, _e_name
+    53                                  ;     add  rdi, _e_age
+    54                                  ;     call malloc
+    55                                  ;     mov  [sally], rax
+    56                                  ;     xor  rdi, rdi
+    57                                  ;     lea  rdi, [sally+_e_name]
+    58                                  ;     lea  rsi, [sally_name]
+    59                                  ;     call strcpy
+    60                                  ; 
+    61                                  ;     mov  rdi, _e_name
+    62                                  ;     add  rdi, _e_age
+    63                                  ;     call malloc
+    64                                  ;     mov  [susan], rax
+    65                                  ;     xor  rdi, rdi
+    66                                  ;     lea  rdi, [susan+_e_name]
+    67                                  ;     lea  rsi, [susan_name]
+    68                                  ;     call strcpy
+    69                                  
+    70 0000004E 48BF-                       mov  rdi, fmt_str
+    70 00000050 [2E00000000000000] 
+    71 00000058 488B3425[00000000]          mov  rsi, [samuel]
+    72 00000060 4883C600                    add  rsi, _e_name
+    73 00000064 E8(00000000)                call printf
+    74 00000069 48BF-                       mov  rdi, fmt_int
+    74 0000006B [3200000000000000] 
+    75 00000073 488B3425[00000000]          mov  rsi, [samuel]
+    76 0000007B 4883C600                    add  rsi, _e_name
+    77 0000007F 4883C620                    add  rsi, _e_age
+    78 00000083 488B36                      mov  rsi, [rsi]
+    79 00000086 E8(00000000)                call printf
+    80                                  
+    81                                  ;     lea  rdi, [sally]
+    82                                  ;     lea  rsi, [samuel]
+    83                                  ;     call compare_employee
+    84                                  ; 
+    85                                  ;     mov  rdi, fmt_int
+    86                                  ;     mov  rsi, rax
+    87                                  ;     call printf
+    88                                  
+    89 0000008B C9                          leave
+    90 0000008C C3                          ret
+    91                                  
+    92                                  global compare_employee
+    93                                  compare_employee:
+    94                                      section .text 
+    95 0000008D 55                              push rbp
+    96 0000008E 4889E5                          mov  rbp, rsp
+    97                                  
+    98 00000091 488D3F                          lea rdi, [rdi+_e_name]
+    99 00000094 488D36                          lea rsi, [rsi+_e_name]
+   100 00000097 E8(00000000)                    call strcmp
+   101                                  
+   102 0000009C C9                              leave
+   103 0000009D C3                              ret
+   104                                    
