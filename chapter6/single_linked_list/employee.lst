@@ -1,0 +1,98 @@
+     1                                  extern printf
+     2                                  extern strcmp
+     3                                  extern malloc
+     4                                  extern strcpy
+     5                                  
+     6                                  struc _employee
+     7 00000000 <res 20h>                   _e_name:  resb 32
+     8 00000020 ??                          _e_age:   resb 1
+     9                                  endstruc
+    10                                  
+    11                                  section .text
+    12                                  
+    13                                  ; global compare_employee
+    14                                  compare_employee:
+    15                                      section .text 
+    16 00000000 55                              push rbp
+    17 00000001 4889E5                          mov  rbp, rsp
+    18                                  
+    19 00000004 488D3F                          lea rdi, [rdi+_e_name]
+    20 00000007 488D36                          lea rsi, [rsi+_e_name]
+    21 0000000A E8(00000000)                    call strcmp
+    22                                  
+    23 0000000F C9                              leave
+    24 00000010 C3                              ret
+    25                                    
+    26                                  ; * Args
+    27                                  ;   * rdi: the address of name(string)
+    28                                  ;   * rsi: age(unsigned integer)
+    29                                  ; * Return: The address of the new employee
+    30                                  ; global init_employee
+    31                                  init_employee:
+    32                                      section .text
+    33 00000011 55                              push rbp
+    34 00000012 4889E5                          mov  rbp, rsp
+    35 00000015 4154                            push r12
+    36                                      
+    37 00000017 4989FA                          mov  r10, rdi      ; the address of name
+    38 0000001A 4989F3                          mov  r11, rsi      ; age
+    39                                          
+    40                                          ; Allocate the memory from heap
+    41 0000001D 4831FF                          xor  rdi, rdi      ; rdi must be initialized!
+    42 00000020 BF20000000                      mov  rdi, _e_age  ; the size of _e_name
+    43 00000025 4883C701                        add  rdi, 1       ; the size of _e_age
+    44 00000029 4152                            push r10
+    45 0000002B 4153                            push r11
+    46 0000002D E8(00000000)                    call malloc
+    47 00000032 415B                            pop  r11
+    48 00000034 415A                            pop  r10
+    49 00000036 4989C4                          mov  r12, rax     ; Backup the address of employee
+    50                                  
+    51                                          ; Set name
+    52 00000039 498D3C24                        lea  rdi, [r12]
+    53 0000003D 498D32                          lea  rsi, [r10]
+    54 00000040 4152                            push r10
+    55 00000042 4153                            push r11
+    56 00000044 4154                            push r12          ; for stack alignment
+    57 00000046 E8(00000000)                    call strcpy
+    58 0000004B 415C                            pop  r12
+    59 0000004D 415B                            pop  r11
+    60 0000004F 415A                            pop  r10
+    61                                  
+    62                                          ; Set age
+    63 00000051 498D3C24                        lea  rdi, [r12]
+    64 00000055 4883C720                        add  rdi, _e_age
+    65 00000059 4C891F                          mov  [rdi], r11
+    66 0000005C 4831FF                          xor  rdi, rdi
+    67 0000005F 4831F6                          xor  rsi, rsi
+    68                                  
+    69 00000062 4C89E0                          mov  rax, r12
+    70                                  
+    71 00000065 415C                            pop r12
+    72 00000067 C9                              leave
+    73 00000068 C3                              ret
+    74                                  
+    75                                  ; Print employee's info
+    76                                  ; 
+    77                                  ; * Args
+    78                                  ;    * rdi: the address of employee
+    79                                  display_employee:
+    80                                      section .data
+    81 00000000 25730925640A00                  .fmt  db  `%s\t%d\n`, 0
+    82                                      section .text
+    83 00000069 55                              push rbp
+    84 0000006A 4889E5                          mov  rbp, rsp
+    85                                  
+    86 0000006D 4989FA                          mov  r10, rdi  ; the address of employee
+    87                                  
+    88 00000070 48BF-                           mov  rdi, .fmt
+    88 00000072 [0000000000000000] 
+    89 0000007A 4C89D6                          mov  rsi, r10     ; name
+    90 0000007D 4C89D2                          mov  rdx, r10 
+    91 00000080 4883C220                        add  rdx, _e_age  
+    92 00000084 488B12                          mov  rdx, [rdx]   ; age
+    93 00000087 E8(00000000)                    call printf
+    94                                  
+    95 0000008C C9                              leave
+    96 0000008D C3                              ret
+    97                                  
