@@ -17,7 +17,7 @@ section .text
 ;
 ; * Args
 ;   * rdi: the address of a list
-; global initialize_list
+global initialize_list
 initialize_list:
     section .text
         push rbp
@@ -37,7 +37,7 @@ initialize_list:
 ; * Args
 ;   * rdi: the address of a list
 ;   * rsi: the address of data
-; global add_head
+global add_head
 add_head:
     section .text
         push rbp

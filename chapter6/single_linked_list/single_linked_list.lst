@@ -17,7 +17,7 @@
     17                                  ;
     18                                  ; * Args
     19                                  ;   * rdi: the address of a list
-    20                                  ; global initialize_list
+    20                                  global initialize_list
     21                                  initialize_list:
     22                                      section .text
     23 00000000 55                              push rbp
@@ -37,7 +37,7 @@
     37                                  ; * Args
     38                                  ;   * rdi: the address of a list
     39                                  ;   * rsi: the address of data
-    40                                  ; global add_head
+    40                                  global add_head
     41                                  add_head:
     42                                      section .text
     43 0000001D 55                              push rbp

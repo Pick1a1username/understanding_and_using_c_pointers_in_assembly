@@ -1,17 +1,10 @@
-#include "unity"
+#include "unity.h"
+#include "single_linked_list.h"
+#include <stdlib.h>
 
-typedef struct _node {
-    void *data;
-    struct _node *next;
-} Node;
-
-typedef struct _linked_list {
-    Node *head;
-    Node *tail;
-    Node *current;
-} LinkedList;
-
-extern void initialize_list(LinkedList);
+typedef _test_data {
+    int num;
+} TestData
 
 void setUp(void) {
     // set stuff up here
@@ -26,9 +19,9 @@ void test_initialize_list(void) {
 
     initialize_list(linked_list);
 
-    TEST_ASSERT_NULL(linked_list.head);
-    TEST_ASSERT_NULL(linked_list.tail);
-    TEST_ASSERT_NULL(linked_list.current);
+    TEST_ASSERT_NULL(linked_list->head);
+    TEST_ASSERT_NULL(linked_list->tail);
+    TEST_ASSERT_NULL(linked_list->current);
 }
 
 

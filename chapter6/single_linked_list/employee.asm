@@ -10,7 +10,7 @@ endstruc
 
 section .text
 
-; global compare_employee
+global compare_employee
 compare_employee:
     section .text 
         push rbp
@@ -27,7 +27,7 @@ compare_employee:
 ;   * rdi: the address of name(string)
 ;   * rsi: age(unsigned integer)
 ; * Return: The address of the new employee
-; global init_employee
+global init_employee
 init_employee:
     section .text
         push rbp
