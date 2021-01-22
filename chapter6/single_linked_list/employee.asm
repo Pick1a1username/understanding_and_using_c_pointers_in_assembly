@@ -10,19 +10,6 @@ endstruc
 
 section .text
 
-global compare_employee
-compare_employee:
-    section .text 
-        push rbp
-        mov  rbp, rsp
-
-        lea rdi, [rdi+_e_name]
-        lea rsi, [rsi+_e_name]
-        call strcmp
-
-        leave
-        ret
-  
 ; * Args
 ;   * rdi: the address of name(string)
 ;   * rsi: age(unsigned integer)
@@ -72,6 +59,19 @@ init_employee:
         leave
         ret
 
+global compare_employee
+compare_employee:
+    section .text 
+        push rbp
+        mov  rbp, rsp
+
+        lea rdi, [rdi+_e_name]
+        lea rsi, [rsi+_e_name]
+        call strcmp
+
+        leave
+        ret
+  
 ; Print employee's info
 ; 
 ; * Args
