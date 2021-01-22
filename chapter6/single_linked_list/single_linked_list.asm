@@ -56,10 +56,11 @@ add_head:
 
         ; Set the data of new node to
         ; the address of data passed as an argument.
-        mov  rax, r13
+        mov  [rax], r13
 
         ; Check the head of the list
-        test r12, 0x0000000000000000
+        mov rdi, [r12]
+        cmp rdi, 0x0000000000000000
         jnz .yes_head
 
         ; If there is no head in the list, set the head to new node
@@ -71,7 +72,8 @@ add_head:
 
         mov  rdi, r14
         add  rdi, _n_next
-        mov  rdi, 0        ; Is this okay?
+        xor  rsi, rsi
+        mov  [rdi], rsi 
 
         jmp .last_step
 
@@ -80,7 +82,8 @@ add_head:
         .yes_head:
         mov  rdi, r14
         add  rdi, _n_next
-        mov  rdi, r12 
+        mov  rsi, [r12]
+        mov  [rdi], rsi
 
         ; Set the head of the list
         .last_step:
@@ -88,13 +91,4 @@ add_head:
 
         leave
         ret
-
-
-
-
-
-
-
-
- 
 

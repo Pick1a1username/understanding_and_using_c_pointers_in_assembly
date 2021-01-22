@@ -56,45 +56,39 @@
     56                                  
     57                                          ; Set the data of new node to
     58                                          ; the address of data passed as an argument.
-    59 0000003F 4C89E8                          mov  rax, r13
+    59 0000003F 4C8928                          mov  [rax], r13
     60                                  
     61                                          ; Check the head of the list
-    62 00000042 49F7C400000000                  test r12, 0x0000000000000000
-    63 00000049 7518                            jnz .yes_head
-    64                                  
-    65                                          ; If there is no head in the list, set the head to new node
-    66                                          ; and set the next of new node to NULL
-    67                                          .no_head:
-    68 0000004B 4C89E7                          mov  rdi, r12
-    69 0000004E 4883C708                        add  rdi, _l_tail
-    70 00000052 4C8937                          mov  [rdi], r14
-    71                                  
-    72 00000055 4C89F7                          mov  rdi, r14
-    73 00000058 4883C708                        add  rdi, _n_next
-    74 0000005C BF00000000                      mov  rdi, 0        ; Is this okay?
-    75                                  
-    76 00000061 EB0A                            jmp .last_step
+    62 00000042 498B3C24                        mov rdi, [r12]
+    63 00000046 4883FF00                        cmp rdi, 0x0000000000000000
+    64 0000004A 7519                            jnz .yes_head
+    65                                  
+    66                                          ; If there is no head in the list, set the head to new node
+    67                                          ; and set the next of new node to NULL
+    68                                          .no_head:
+    69 0000004C 4C89E7                          mov  rdi, r12
+    70 0000004F 4883C708                        add  rdi, _l_tail
+    71 00000053 4C8937                          mov  [rdi], r14
+    72                                  
+    73 00000056 4C89F7                          mov  rdi, r14
+    74 00000059 4883C708                        add  rdi, _n_next
+    75 0000005D 4831F6                          xor  rsi, rsi
+    76 00000060 488937                          mov  [rdi], rsi 
     77                                  
-    78                                          ; If there is a head in the list,
-    79                                          ; set the next of new node to the head of the list.
-    80                                          .yes_head:
-    81 00000063 4C89F7                          mov  rdi, r14
-    82 00000066 4883C708                        add  rdi, _n_next
-    83 0000006A 4C89E7                          mov  rdi, r12 
-    84                                  
-    85                                          ; Set the head of the list
-    86                                          .last_step:
-    87 0000006D 4D893424                        mov [r12], r14
-    88                                  
-    89 00000071 C9                              leave
-    90 00000072 C3                              ret
+    78 00000063 EB0E                            jmp .last_step
+    79                                  
+    80                                          ; If there is a head in the list,
+    81                                          ; set the next of new node to the head of the list.
+    82                                          .yes_head:
+    83 00000065 4C89F7                          mov  rdi, r14
+    84 00000068 4883C708                        add  rdi, _n_next
+    85 0000006C 498B3424                        mov  rsi, [r12]
+    86 00000070 488937                          mov  [rdi], rsi
+    87                                  
+    88                                          ; Set the head of the list
+    89                                          .last_step:
+    90 00000073 4D893424                        mov [r12], r14
     91                                  
-    92                                  
-    93                                  
+    92 00000077 C9                              leave
+    93 00000078 C3                              ret
     94                                  
-    95                                  
-    96                                  
-    97                                  
-    98                                  
-    99                                   
-   100                                  

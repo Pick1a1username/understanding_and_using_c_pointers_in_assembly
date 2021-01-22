@@ -10,3 +10,5 @@ typedef struct _linked_list {
 } LinkedList;
 
 extern void initialize_list(LinkedList*);
+
+extern void add_head(LinkedList*, void*);
