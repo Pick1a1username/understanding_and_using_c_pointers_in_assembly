@@ -24,11 +24,15 @@ initialize_list:
         push rbp
         mov  rbp, rsp
 
-        mov  rdi, 0          ; Set _l_head to NULL
-        add  rdi, _l_tail
-        mov  rdi, 0          ; Set _l_tail to NULL
-        add  rdi, _l_current
-        mov  rdi, 0          ; Set _l_current to NULL
+        mov r12, rdi
+
+        xor rsi, rsi
+        mov [rdi], rsi          ; Set _l_head to NULL
+        add rdi, _l_tail
+        mov [rdi], rsi          ; Set _l_tail to NULL
+        mov rdi, r12
+        add rdi, _l_current
+        mov [rdi], rsi          ; Set _l_current to NULL
 
         leave
         ret
@@ -217,11 +221,12 @@ delete:
 
         .node_eq_list_head:
         add  rdi, _n_next  ; the next node of the head node
+        mov  rdi, [rdi]
         test rdi, rdi      ;
         jnz  .change_list_head
 
         ; Clear the head and the tail of the list.
-        mov rdi, [r12]
+        mov rdi, r12
         mov rsi, 0
         mov [rdi], rsi
         add rdi, _l_tail
@@ -231,10 +236,8 @@ delete:
 
         ; Change the head of the list to the second node.
         .change_list_head:
-        mov rdi, [r12]
-        mov rsi, r12
-        add rsi, _l_tail
-        mov rsi, [rsi]
+        mov rdi, r12
+        mov rsi, [r12]
         add rsi, _n_next
         mov rsi, [rsi]
         mov [rdi], rsi
@@ -246,17 +249,17 @@ delete:
 
         ; Find the previous node of the target node.
         .find_node:
-        add rdi, _n_next
-
         test rdi, rdi
         jz   .after_finding  ; if the node is NULL, stop the loop.
 
         mov rsi, rdi
         add rsi, _n_next
-        cmp rdi, [rsi]
+        mov rsi, [rsi]
+        cmp rsi, r13
         jz  .after_finding  ; if the next node of the node is target node,
                             ; stop the loop.
 
+        add rdi, _n_next
         mov rdi, [rdi]  ; Get the next node.
         jmp .find_node
 
@@ -269,7 +272,7 @@ delete:
         mov rsi, r13
         add rsi, _n_next
         mov rsi, [rsi]
-        mov [rdi], r13
+        mov [rdi], rsi
         
         .last_step:
         mov  rdi, r13
